@@ -3,33 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>สอยดาวรับโชค กลุ่ม 1</title>
+    <title>สอยดาวรับโชค - สงกรานต์</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
-        body { font-family: sans-serif; text-align: center; background-color: #fff9e6; padding: 20px; }
-        .reward-box { font-size: 30px; color: #e63946; font-weight: bold; border: 3px dashed #e63946; padding: 20px; margin: 20px; border-radius: 15px; background: white; }
-        button { background-color: #00b900; color: white; border: none; padding: 15px; border-radius: 30px; width: 100%; font-size: 18px; cursor: pointer; }
-        .played-notice { color: #888; font-size: 14px; margin-top: 10px; }
+        body { 
+            font-family: 'Sarabun', sans-serif; 
+            text-align: center; 
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            /* ใส่รูปพื้นหลังของคุณ */
+            background-image: url('https://github.com/zjpreaw-DBS/Songkarn-DBS-Game/blob/main/%E0%B8%94%E0%B8%B5%E0%B9%84%E0%B8%8B%E0%B8%99%E0%B9%8C%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B8%A2%E0%B8%B1%E0%B8%87%E0%B9%84%E0%B8%A1%E0%B9%88%E0%B9%84%E0%B8%94%E0%B9%89%E0%B8%95%E0%B8%B1%E0%B9%89%E0%B8%87%E0%B8%8A%E0%B8%B7%E0%B9%88%E0%B8%AD.png?raw=true'); 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.85); /* พื้นหลังขาวจางๆ ให้ตัวหนังสือชัด */
+            margin: 20px;
+            padding: 30px 20px;
+            border-radius: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            border: 2px solid #ffffff;
+            max-width: 85%;
+        }
+
+        h2#user-name {
+            color: #01579b;
+            margin-top: 0;
+            font-size: 22px;
+        }
+
+        #status-text {
+            color: #0277bd;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .reward-box { 
+            font-size: 34px; 
+            color: #e63946; 
+            font-weight: bold; 
+            border: 4px dashed #ffb74d; 
+            padding: 25px 10px; 
+            margin: 20px 0; 
+            border-radius: 20px; 
+            background-color: #fffde7;
+            text-shadow: 1px 1px 0px #fff;
+        }
+
+        .instruction {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        button { 
+            background: linear-gradient(135deg, #00c853 0%, #00b900 100%);
+            color: white; 
+            border: none; 
+            padding: 18px; 
+            border-radius: 40px; 
+            width: 100%; 
+            font-size: 20px; 
+            font-weight: bold;
+            cursor: pointer; 
+            box-shadow: 0 4px 15px rgba(0,200,83,0.4);
+            transition: 0.2s;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
     </style>
 </head>
 <body>
-    <div id="main-ui">
+
+    <div class="container">
         <h2 id="user-name">สวัสดีค่ะ</h2>
         
         <div id="result" style="display:none;">
             <p id="status-text">ยินดีด้วย! คุณสอยดาวได้รางวัล:</p>
             <div class="reward-box" id="reward-text"></div>
-            <p>แคปหน้าจอนี้แจ้งรับสิทธิ์ได้เลยค่ะ</p>
+            <p class="instruction">📸 แคปหน้าจอนี้แจ้งรับสิทธิ์ได้เลยค่ะ</p>
         </div>
 
-        <button onclick="liff.closeWindow()" style="margin-top: 20px;">ปิดหน้าต่าง</button>
+        <button onclick="liff.closeWindow()">ปิดหน้าต่าง</button>
     </div>
 
     <script>
-        // --- ส่วนที่ต้องใช้ ID ของกลุ่มที่ 1 ---
-        const myLiffId = '2009679023-d6EBAyR8'; 
+        // --- ส่วนที่ต้องแก้ตามกลุ่ม ---
+        const myLiffId = '2009679023-d6EBAyR8'; // ID กลุ่มที่ 1
         
-        // รายการรางวัลกลุ่มที่ 1
         const luckyBag = [ 
             ...Array(10).fill("ส่วนลด 1,000 บาท"),
             ...Array(10).fill("ส่วนลด 3,000 บาท"),
@@ -44,21 +116,16 @@
                 const profile = await liff.getProfile();
                 document.getElementById('user-name').innerText = "สวัสดีคุณ " + profile.displayName;
                 
-                // 1. เช็คก่อนว่าคนนี้ "เคยสุ่มไปแล้ว" หรือยัง
+                // เช็ครางวัลเดิม
                 const savedReward = localStorage.getItem('my_reward_' + profile.userId);
                 
                 if (savedReward) {
-                    // --- กรณีเคยเล่นแล้ว: ดึงรางวัลเดิมมาโชว์ ---
                     document.getElementById('status-text').innerText = "รางวัลเดิมที่คุณได้รับคือ:";
                     document.getElementById('reward-text').innerText = savedReward;
                     document.getElementById('result').style.display = 'block';
                 } else {
-                    // --- กรณีเป็นคนใหม่: สุ่มใหม่และบันทึกไว้ ---
                     const win = luckyBag[Math.floor(Math.random() * luckyBag.length)];
-                    
-                    // บันทึกรางวัลลงในเครื่องลูกค้า (กันลืม)
                     localStorage.setItem('my_reward_' + profile.userId, win);
-                    
                     document.getElementById('reward-text').innerText = win;
                     document.getElementById('result').style.display = 'block';
                 }
