@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สอยดาวรับโชค - สงกรานต์</title>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <style>
+        body { 
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+            text-align: center; 
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+            /* ดึงรูปภาพที่คุณอัปโหลดไว้มาเป็นพื้นหลัง */
+            background-image: url('พื้นหลังสงกรานต์.png'); 
+            background-size: cover;
+            background-position: center top;
+            background-attachment: fixed;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* กล่องข้อความที่ถูกดึงขึ้นไปด้านบน */
+        #content-wrapper {
+            width: 85%;
+            max-width: 350px;
+            margin-top: 40px; /* ระยะห่างจากขอบบน ปรับให้น้อยเพื่อให้ลอยสูง */
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.85); /* ขาวโปร่งแสงสวยๆ */
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+
+        h2 { color: #004d99; margin: 0 0 5px 0; font-size: 20px; }
+        p { color: #333; margin: 5px 0; font-size: 16px; font-weight: 500; }
+
+        .reward-box { 
+            font-size: 26px; 
+            color: #e63946; 
+            font-weight: bold; 
+            border: 2px dashed #ffb3b3; 
+            padding: 15px; 
+            margin: 15px 0; 
+            border-radius: 12px; 
+            background: #fff; 
+        }
+
+        .notice { font-size: 12px; color: #666; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+    <div id="content-wrapper">
+        <h2 id="user-name">สวัสดีค่ะ</h2>
+        
+        <div id="result" style="display:none;">
+            <p id="status-text">ยินดีด้วย! คุณสอยดาวได้รางวัล:</p>
+            <div class="reward-box" id="reward-text"></div>
+            <p class="notice">📸 แคปหน้าจอนี้แจ้งรับสิทธิ์ได้เลยค่ะ</p>
+        </div>
+    </div>
+
+    <script>
+        // ใส่ LIFF ID ของกลุ่มที่ 3
+        const myLiffId = '2009679023-UOzZLOsE'; 
+        
+        const luckyBag = [ 
+            ...Array(10).fill("ส่วนลด 10,000 บาท"),
+            ...Array(8).fill("ส่วนลด 12,000 บาท"),
+            ...Array(6).fill("ส่วนลด 14,000 บาท"),
+            ...Array(1).fill("ส่วนลด 20,000 บาท")
+        ];
+
+        async function initGame() {
+            try {
+                await liff.init({ liffId: myLiffId });
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                } else {
+                    const profile = await liff.getProfile();
+                    document.getElementById('user-name').innerText = "สวัสดีคุณ " + profile.displayName;
+                    
+                    const savedReward = localStorage.getItem('my_reward_' + profile.userId);
+                    
+                    if (savedReward) {
+                        document.getElementById('status-text').innerText = "รางวัลเดิมของคุณคือ:";
+                        document.getElementById('reward-text').innerText = savedReward;
+                    } else {
+                        const win = luckyBag[Math.floor(Math.random() * luckyBag.length)];
+                        localStorage.setItem('my_reward_' + profile.userId, win);
+                        document.getElementById('reward-text').innerText = win;
+                    }
+                    document.getElementById('result').style.display = 'block';
+                }
+            } catch (err) {
+                console.log('Error:', err);
+            }
+        }
+        initGame();
+    </script>
+</body>
+</html>
