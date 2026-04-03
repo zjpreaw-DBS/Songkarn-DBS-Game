@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>กิจกรรมสอยดาวรับโชค</title>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <style>
+        body { font-family: sans-serif; text-align: center; background-color: #fff9e6; padding: 20px; }
+        .star-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; max-width: 400px; margin: 0 auto; }
+        .star { font-size: 30px; cursor: pointer; background: white; border-radius: 10px; padding: 10px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        #result, #already-played { display: none; margin-top: 30px; padding: 20px; background: white; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .coupon { font-size: 24px; color: #e63946; font-weight: bold; margin: 20px 0; border: 2px dashed #e63946; padding: 10px; }
+        button { background-color: #00b900; color: white; border: none; padding: 12px 25px; border-radius: 25px; cursor: pointer; width: 100%; }
+    </style>
+</head>
+<body>
+    <div id="game-ui">
+        <h2 id="greeting">สวัสดีคุณลูกค้า</h2>
+        <p>เลือกดาว 1 ใน 25 ดวง เพื่อรับส่วนลดค่ะ!</p>
+        <div class="star-container" id="star-grid"></div>
+    </div>
+
+    <div id="result">
+        <h2>ยินดีด้วย! 🌟</h2>
+        <p>คุณได้รับรางวัล:</p>
+        <div class="coupon" id="reward-text"></div>
+        <button onclick="liff.closeWindow()">ตกลง</button>
+    </div>
+
+    <div id="already-played">
+        <h2>คุณใช้สิทธิ์ไปแล้วค่ะ</h2>
+        <p>1 ท่านร่วมสนุกได้ 1 ครั้งเท่านั้น</p>
+        <button onclick="liff.closeWindow()">ปิดหน้าต่าง</button>
+    </div>
+
+    <script>
+        // *** สำคัญ: ใส่ LIFF ID ของคุณที่นี่ ***
+        const myLiffId = 'https://liff.line.me/2009679023-d6EBAyR8'; 
+
+        const luckyBag = [
+            ...Array(10).fill("ส่วนลด 1,000 บาท"),
+            ...Array(10).fill("ส่วนลด 3,000 บาท"),
+            ...Array(5).fill("ส่วนลด 4,000 บาท")
+        ];
+
+        async function main() {
+            await liff.init({ liffId: myLiffId });
+            if (!liff.isLoggedIn()) { liff.login(); } 
+            else {
+                const profile = await liff.getProfile();
+                document.getElementById('greeting').innerText = "สวัสดีคุณ " + profile.displayName;
+                if (localStorage.getItem('played_' + profile.userId)) {
+                    document.getElementById('game-ui').style.display = 'none';
+                    document.getElementById('already-played').style.display = 'block';
+                } else { renderStars(); }
+            }
+        }
+
+        function renderStars() {
+            const grid = document.getElementById('star-grid');
+            for (let i = 1; i <= 25; i++) {
+                const star = document.createElement('div');
+                star.className = 'star'; star.innerHTML = '⭐';
+                star.onclick = () => pickStar();
+                grid.appendChild(star);
+            }
+        }
+
+        async function pickStar() {
+            const profile = await liff.getProfile();
+            const finalReward = luckyBag[Math.floor(Math.random() * luckyBag.length)];
+            localStorage.setItem('played_' + profile.userId, 'true');
+            document.getElementById('game-ui').style.display = 'none';
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('reward-text').innerText = finalReward;
+        }
+        main();
+    </script>
+</body>
+</html>
