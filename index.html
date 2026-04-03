@@ -3,32 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>สอยดาวรับโชค</title>
+    <title>สอยดาวรับโชค กลุ่ม 1</title>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
         body { font-family: sans-serif; text-align: center; background-color: #fff9e6; padding: 20px; }
         .reward-box { font-size: 30px; color: #e63946; font-weight: bold; border: 3px dashed #e63946; padding: 20px; margin: 20px; border-radius: 15px; background: white; }
         button { background-color: #00b900; color: white; border: none; padding: 15px; border-radius: 30px; width: 100%; font-size: 18px; cursor: pointer; }
+        .played-notice { color: #888; font-size: 14px; margin-top: 10px; }
     </style>
 </head>
 <body>
     <div id="main-ui">
         <h2 id="user-name">สวัสดีค่ะ</h2>
+        
         <div id="result" style="display:none;">
-            <p>ยินดีด้วย! คุณสอยดาวได้รางวัล:</p>
+            <p id="status-text">ยินดีด้วย! คุณสอยดาวได้รางวัล:</p>
             <div class="reward-box" id="reward-text"></div>
             <p>แคปหน้าจอนี้แจ้งรับสิทธิ์ได้เลยค่ะ</p>
         </div>
-        <div id="played" style="display:none;">
-            <h2 style="color: #888;">คุณเคยใช้สิทธิ์ไปแล้ว</h2>
-            <p>1 ท่านร่วมสนุกได้ 1 ครั้งเท่านั้นค่ะ</p>
-        </div>
-        <button onclick="liff.closeWindow()">ปิดหน้าต่าง</button>
+
+        <button onclick="liff.closeWindow()" style="margin-top: 20px;">ปิดหน้าต่าง</button>
     </div>
 
     <script>
-        // --- ส่วนที่ต้องแก้ ---
-        const myLiffId = '2009679023-d6EBAyR8'; // ID กลุ่มที่ 1
+        // --- ส่วนที่ต้องใช้ ID ของกลุ่มที่ 1 ---
+        const myLiffId = '2009679023-d6EBAyR8'; 
+        
+        // รายการรางวัลกลุ่มที่ 1
         const luckyBag = [ 
             ...Array(10).fill("ส่วนลด 1,000 บาท"),
             ...Array(10).fill("ส่วนลด 3,000 บาท"),
@@ -43,11 +44,21 @@
                 const profile = await liff.getProfile();
                 document.getElementById('user-name').innerText = "สวัสดีคุณ " + profile.displayName;
                 
-                if (localStorage.getItem('played_' + profile.userId)) {
-                    document.getElementById('played').style.display = 'block';
+                // 1. เช็คก่อนว่าคนนี้ "เคยสุ่มไปแล้ว" หรือยัง
+                const savedReward = localStorage.getItem('my_reward_' + profile.userId);
+                
+                if (savedReward) {
+                    // --- กรณีเคยเล่นแล้ว: ดึงรางวัลเดิมมาโชว์ ---
+                    document.getElementById('status-text').innerText = "รางวัลเดิมที่คุณได้รับคือ:";
+                    document.getElementById('reward-text').innerText = savedReward;
+                    document.getElementById('result').style.display = 'block';
                 } else {
+                    // --- กรณีเป็นคนใหม่: สุ่มใหม่และบันทึกไว้ ---
                     const win = luckyBag[Math.floor(Math.random() * luckyBag.length)];
-                    localStorage.setItem('played_' + profile.userId, 'true');
+                    
+                    // บันทึกรางวัลลงในเครื่องลูกค้า (กันลืม)
+                    localStorage.setItem('my_reward_' + profile.userId, win);
+                    
                     document.getElementById('reward-text').innerText = win;
                     document.getElementById('result').style.display = 'block';
                 }
