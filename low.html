@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สอยดาวรับโชค - กลุ่ม 0</title>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <style>
+        body { 
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+            text-align: center; 
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+            background-image: url('พื้นหลังสงกรานต์.png'); 
+            background-size: cover;
+            background-position: center top;
+            background-attachment: fixed;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #content-wrapper {
+            width: 85%;
+            max-width: 350px;
+            margin-top: 40px; 
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.85); 
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+        h2 { color: #004d99; margin: 0 0 5px 0; font-size: 20px; }
+        p { color: #333; margin: 5px 0; font-size: 16px; font-weight: 500; }
+        .reward-box { 
+            font-size: 26px; 
+            color: #e63946; 
+            font-weight: bold; 
+            border: 2px dashed #ffb3b3; 
+            padding: 15px; 
+            margin: 15px 0; 
+            border-radius: 12px; 
+            background: #fff; 
+        }
+        .notice { font-size: 12px; color: #666; margin-top: 5px; }
+        /* เพิ่มปุ่มรีเซ็ตแบบเนียนๆ */
+        #admin-reset { margin-top: 20px; opacity: 0.1; font-size: 10px; cursor: pointer; color: #ccc; }
+    </style>
+</head>
+<body>
+    <div id="content-wrapper">
+        <h2 id="user-name">สวัสดีค่ะ</h2>
+        <div id="result" style="display:none;">
+            <p id="status-text">ยินดีด้วย! คุณสอยดาวได้รางวัล:</p>
+            <div class="reward-box" id="reward-text"></div>
+            <p class="notice">📸 แคปหน้าจอนี้แจ้งรับสิทธิ์ได้เลยค่ะ</p>
+        </div>
+        <div id="admin-reset" onclick="resetGame()">[Reset สิทธิ์]</div>
+    </div>
+
+    <script>
+        const myLiffId = '2009679023-RJfXV1IB'; // ID กลุ่ม 0
+        const storageKey = 'reward_low_'; 
+        const luckyBag = [ 
+            ...Array(10).fill("ส่วนลด 400 บาท"),
+            ...Array(10).fill("ส่วนลด 600 บาท"),
+            ...Array(5).fill("ส่วนลด 800 บาท")
+        ];
+
+        async function initGame() {
+            try {
+                await liff.init({ liffId: myLiffId });
+                if (!liff.isLoggedIn()) { liff.login(); } 
+                else {
+                    const profile = await liff.getProfile();
+                    document.getElementById('user-name').innerText = "สวัสดีคุณ " + profile.displayName;
+                    const saved = localStorage.getItem(storageKey + profile.userId);
+                    if (saved) {
+                        document.getElementById('status-text').innerText = "รางวัลเดิมของคุณคือ:";
+                        document.getElementById('reward-text').innerText = saved;
+                    } else {
+                        const win = luckyBag[Math.floor(Math.random() * luckyBag.length)];
+                        localStorage.setItem(storageKey + profile.userId, win);
+                        document.getElementById('reward-text').innerText = win;
+                    }
+                    document.getElementById('result').style.display = 'block';
+                }
+            } catch (err) { console.log('Error:', err); }
+        }
+        function resetGame() {
+            if(confirm("ล้างสิทธิ์เพื่อสอยดาวใหม่?")) {
+                liff.getProfile().then(p => { localStorage.removeItem(storageKey + p.userId); location.reload(); });
+            }
+        }
+        initGame();
+    </script>
+</body>
+</html>
