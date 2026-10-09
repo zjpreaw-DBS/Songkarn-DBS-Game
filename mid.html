@@ -3,24 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>สอยดาวลุ้นรางวัลเงินสด</title>
+    <title>ช๊อปทุกชิ้น-รับสิทธิ์ทุบฟักทอง</title>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
-        /* ดีไซน์เดียวกับอันแรกเป๊ะๆ */
-        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; text-align: center; margin: 0; padding: 0; background-color: #fff; background-image: url('พื้นหลังสงกรานต์.png'); background-size: cover; background-position: center top; background-attachment: fixed; height: 100vh; display: flex; flex-direction: column; align-items: center; }
-        #content-wrapper { width: 85%; max-width: 350px; margin-top: 40px; padding: 20px; background-color: rgba(255, 255, 255, 0.85); border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); z-index: 10; }
-        h2 { color: #004d99; margin: 0 0 5px 0; font-size: 20px; }
+        body { 
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+            text-align: center; 
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+            /* แก้ไขชื่อไฟล์รูปเป็นภาษาอังกฤษเพื่อป้องกันปัญหาลิงก์เสีย */
+            background-image: url('bg.jpg');
+            background-size: cover;
+            background-position: center top;
+            background-attachment: fixed;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #content-wrapper {
+            width: 85%;
+            max-width: 350px;
+            margin-top: 40px; 
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.85); 
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
         p { color: #333; margin: 5px 0; font-size: 16px; font-weight: 500; }
-        .reward-box { font-size: 26px; color: #e63946; font-weight: bold; border: 2px dashed #ffb3b3; padding: 15px; margin: 15px 0; border-radius: 12px; background: #fff; }
+        .reward-box { 
+            font-size: 26px; 
+            color: #e63946; 
+            font-weight: bold; 
+            border: 2px dashed #ffb3b3; 
+            padding: 15px; 
+            margin: 15px 0; 
+            border-radius: 12px; 
+            background: #fff; 
+        }
         .notice { font-size: 12px; color: #666; margin-top: 5px; }
         #admin-reset { margin-top: 20px; opacity: 0.1; font-size: 10px; cursor: pointer; color: #ccc; }
     </style>
 </head>
 <body>
     <div id="content-wrapper">
-        <h2 id="user-name">สวัสดีค่ะ</h2>
+        <p id="user-name" style="font-size: 20px; color: #004d99; font-weight: bold; margin-bottom: 10px;">สวัสดีค่ะ</p>
+        
         <div id="result" style="display:none;">
-            <p id="status-text">ยินดีด้วย! คุณสอยดาวได้รางวัล:</p>
+            <p id="status-text">ยินดีด้วย! คุณทุบฟักทองได้รางวัล 🎃:</p>
             <div class="reward-box" id="reward-text"></div>
             <p class="notice">📸 แคปหน้าจอนี้แจ้งรับสิทธิ์ได้เลยค่ะ</p>
         </div>
@@ -28,6 +60,7 @@
     </div>
 
     <script>
+        // ⚠️ อย่าลืมใส่ LIFF ID ของกลุ่ม 0 ตรงนี้นะคะ!
         const myLiffId = '2009679023-fADL4UJI'; 
         const storageKey = 'reward_mid_'; 
         const luckyBag = [ 
@@ -46,7 +79,7 @@
                     document.getElementById('user-name').innerText = "สวัสดีคุณ " + profile.displayName;
                     const saved = localStorage.getItem(storageKey + profile.userId);
                     if (saved) {
-                        document.getElementById('status-text').innerText = "รางวัลเดิมของคุณคือ:";
+                        document.getElementById('status-text').innerText = "รางวัลเดิมของคุณคือ 🎃:";
                         document.getElementById('reward-text').innerText = saved;
                     } else {
                         const win = luckyBag[Math.floor(Math.random() * luckyBag.length)];
@@ -58,7 +91,7 @@
             } catch (err) { console.log('Error:', err); }
         }
         function resetGame() {
-            if(confirm("ล้างสิทธิ์เพื่อสอยดาวใหม่?")) {
+            if(confirm("ล้างสิทธิ์เพื่อทุบฟักทองใหม่?")) {
                 liff.getProfile().then(p => { localStorage.removeItem(storageKey + p.userId); location.reload(); });
             }
         }
